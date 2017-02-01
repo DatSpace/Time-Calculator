@@ -50,5 +50,5 @@ Temporary Items
 *.pdb
 *.cache
 *.cs
-obj/Debug/TimeTo-Calculator.csproj.FileListAbsolute.txt
 *.manifest
+*.txt

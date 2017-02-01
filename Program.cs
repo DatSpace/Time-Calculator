@@ -4,6 +4,24 @@ namespace TimeToCalculator
 {
     class Program
     {
+        static string userInput(bool isDate)
+        {
+            if (isDate == true)
+                Console.Write("\nPlease enter the date: ");
+            else
+                Console.Write("\nPlease enter the time: ");
+            string dateTo = Console.ReadLine();
+            Console.WriteLine();
+            return dateTo;
+        }
+
+        static void printError(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
+
         static void Main(string[] args)
         {
             Console.WriteLine("\nWelcome to TimeTo!\n");
@@ -15,150 +33,111 @@ namespace TimeToCalculator
             bool validTime = false;
             char[] dateChar = dateTo.ToCharArray();
             char[] timeChar = timeTo.ToCharArray();
+            int day = 0;
+            int month = 0;
+            int year = 0;
 
             //START OF DATE CHECKING
 
             while (validDate == false)
             {
-                if (dateTo.Length != 10 ||
-                    (dateChar[2] != '/' || dateChar[5] != '/'))
+                if (dateTo.Length != 10 || (dateChar[2] != '/' || dateChar[5] != '/'))
                 {
                     if (again == true)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("\n\nPlease use the correct date format");
-                        Console.ResetColor();
-                    }
+                        printError("\n\nPlease use the correct date format!");
                     
                     Console.WriteLine("\nPlease enter the date-to (dd/mm/yyyy)");
                     Console.WriteLine("Example: 05/10/2017");
-                    Console.Write("\nPlease enter the date: ");
-                    again = true;
-                    dateTo = Console.ReadLine();
-                    Console.WriteLine();
+
+                    dateTo = userInput(true);
                     dateChar = dateTo.ToCharArray();
-                }
-                else if (Convert.ToInt32(dateTo.Substring(6, 4)) > 2099 || Convert.ToInt32(dateTo.Substring(6, 4)) < 2017)
-                {
-                    again = false;
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Please use a valid year (2017-2099)");
-                    Console.ResetColor();
-                    
-                    Console.Write("\nPlease enter the date: ");
-                    dateTo = Console.ReadLine();
-                    Console.WriteLine();
-                }
-                else if (Convert.ToInt32(dateTo.Substring(3, 2)) > 12 || Convert.ToInt32(dateTo.Substring(3, 2)) < 1)
-                {
-                    again = false;
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Please use a valid month (01-12)");
-                    Console.ResetColor();
-                    
-                    Console.Write("\nPlease enter the date: ");
-                    dateTo = Console.ReadLine();
-                    Console.WriteLine();
+                    again = true;
                 }
                 else
                 {
-                    validDate = true;
-                    if (Convert.ToInt32(dateTo.Substring(3, 2)) != 2)
+                    day = Convert.ToInt32(dateTo.Substring(0, 2));
+                    month = Convert.ToInt32(dateTo.Substring(3, 2));
+                    year = Convert.ToInt32(dateTo.Substring(6, 4));
+                    again = true;
+
+                    if (year > 2099 || year < 2017)
                     {
-                        if (Convert.ToInt32(dateTo.Substring(3, 2)) <= 7)
+                        printError("Please use a valid year (2017-2099)!");
+                        dateTo = userInput(true);
+                    }
+                    else if (month > 12 || month < 1)
+                    {
+                        printError("Please use a valid month (01-12)!");
+                        dateTo = userInput(true);
+                    }
+                    else
+                    {
+                        validDate = true;
+                        if (month != 2)
                         {
-                            if (Convert.ToInt32(dateTo.Substring(3, 2)) % 2 == 1)
+                            if (month < 8)
                             {
-                                if (Convert.ToInt32(dateTo.Substring(0, 2)) < 1 || Convert.ToInt32(dateTo.Substring(0, 2)) > 31)
+                                if (month % 2 == 1)
                                 {
-                                    validDate = false;
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("Please enter a valid day number for this month (01-31)");
-                                    Console.ResetColor();
-                                    
-                                    Console.Write("\nPlease enter the date: ");
-                                    dateTo = Console.ReadLine();
-                                    Console.WriteLine();
+                                    if (day < 1 || day > 31)
+                                    {
+                                        validDate = false;
+                                        printError("Please enter a valid day number for this month (01-31)!");
+                                        dateTo = userInput(true);
+                                    }
+                                }
+                                else
+                                {
+                                    if (day < 1 || day > 30)
+                                    {
+                                        validDate = false;
+                                        printError("Please enter a valid day number for this month (01-30)!");
+                                        dateTo = userInput(true);
+                                    }
                                 }
                             }
                             else
                             {
-                                if (Convert.ToInt32(dateTo.Substring(0, 2)) < 1 || Convert.ToInt32(dateTo.Substring(0, 2)) > 30)
+                                if (Convert.ToInt32(dateTo.Substring(3, 2)) % 2 == 0)
                                 {
-                                    validDate = false;
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("Please enter a valid day number for this month (01-30)");
-                                    Console.ResetColor();
-                                    
-                                    Console.Write("\nPlease enter the date: ");
-                                    dateTo = Console.ReadLine();
-                                    Console.WriteLine();
+                                    if (day < 1 || day > 31)
+                                    {
+                                        validDate = false;
+                                        printError("Please enter a valid day number for this month (0-31)!");
+                                        dateTo = userInput(true);
+                                    }
+                                }
+                                else
+                                {
+                                    if (day < 1 || day > 30)
+                                    {
+                                        validDate = false;
+                                        printError("Please enter a valid day number for this month (0-30)!");
+                                        dateTo = userInput(true);
+                                    }
                                 }
                             }
                         }
                         else
                         {
-                            if (Convert.ToInt32(dateTo.Substring(3, 2)) % 2 == 0)
+                            if (year % 4 == 0)
                             {
-                                if (Convert.ToInt32(dateTo.Substring(0, 2)) < 1 || Convert.ToInt32(dateTo.Substring(0, 2)) > 31)
+                                if (day < 1 || day > 29)
                                 {
                                     validDate = false;
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("Please enter a valid day number for this month (0-31)");
-                                    Console.ResetColor();
-                                    
-                                    Console.Write("\nPlease enter the date: ");
-                                    dateTo = Console.ReadLine();
-                                    Console.WriteLine();
+                                    printError("This is a leap year. Please use a valid number of days (01-29)!");
+                                    dateTo = userInput(true);
                                 }
                             }
-                            else
-                            {
-                                if (Convert.ToInt32(dateTo.Substring(0, 2)) < 1 || Convert.ToInt32(dateTo.Substring(0, 2)) > 30)
-                                {
-                                    validDate = false;
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("Please enter a valid day number for this month (0-30)");
-                                    Console.ResetColor();
-                                    
-                                    Console.Write("\nPlease enter the date: ");
-                                    dateTo = Console.ReadLine();
-                                    Console.WriteLine();
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (Convert.ToInt32(dateTo.Substring(6, 4)) % 4 == 0)
-                        {
-                            if (Convert.ToInt32(dateTo.Substring(0, 2)) < 1 || Convert.ToInt32(dateTo.Substring(0, 2)) > 29)
+                            else if (day < 1 || day > 28)
                             {
                                 validDate = false;
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine("This is a leap year. Please use a valid number of days (01-29)");
-                                Console.ResetColor();
-                                
-                                Console.Write("\nPlease enter the date: ");
-                                dateTo = Console.ReadLine();
-                                Console.WriteLine();
+                                printError("This is not a leap year. Please use a valid number of days (01-28)!");
+                                dateTo = userInput(true);
                             }
                         }
-                        else if (Convert.ToInt32(dateTo.Substring(0, 2)) < 1 || Convert.ToInt32(dateTo.Substring(0, 2)) > 28)
-                        {
-                            validDate = false;
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("This is not a leap year. Please use a valid number of days (01-28)");
-                            Console.ResetColor();
-                            
-                            Console.Write("\nPlease enter the date: ");
-                            dateTo = Console.ReadLine();
-                            Console.WriteLine();
-                        }
                     }
-
                 }
-                again = false;
             }
 
             //END OF DATE CHECKING
@@ -173,14 +152,13 @@ namespace TimeToCalculator
             while (useTime.ToUpper() != "Y" && useTime.ToUpper() != "N")
             {
                 if (again == true)
+                    printError("\n\nPlease type Y (Yes) or N (No)!");
+                else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\n\nPlease type Y (Yes) or N (No)!");
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine("\nYou chose date: {0}\n", dateTo);
                     Console.ResetColor();
                 }
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine("\nYou chose date: {0}\n", dateTo);
-                Console.ResetColor();
                 
                 Console.WriteLine("Would you like to specify the time of the date you chose, as well ?");
                 Console.Write("Specify time (Y/N): ");
@@ -189,67 +167,55 @@ namespace TimeToCalculator
             }
 
             again = false;
+            int hour = 0;
+            int minute = 0;
+            int second = 0;
 
             if (useTime.ToUpper() == "Y")
             {
                 while (validTime == false)
                 {
-                    if (timeTo.Length != 8 ||
-                        (timeChar[2] != ':' || timeChar[5] != ':'))
+                    if (timeTo.Length != 8 || timeChar[2] != ':' || timeChar[5] != ':')
                     {
                         if (again == true)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("\n\nPlease use the correct time format");
-                            Console.ResetColor();
-                        }
-                            
+                            printError("\n\nPlease use the correct time format");
+
                         Console.WriteLine("\nPlease enter the time-to (hh:mm:ss)");
                         Console.WriteLine("Example: 17:23:46");
-                        Console.Write("\nPlease enter the time: ");
-                        again = true;
-                        timeTo = Console.ReadLine();
-                        Console.WriteLine();
-                        timeChar = timeTo.ToCharArray();
-                    }
-                    else if (Convert.ToInt32(timeTo.Substring(0,2)) < 0 || Convert.ToInt32(timeTo.Substring(0,2)) > 23)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Please enter a valid hours number (00-23)");
-                        Console.ResetColor();
                         
-                        Console.Write("\nPlease enter the time: ");
-                        again = true;
-                        timeTo = Console.ReadLine();
-                        Console.WriteLine();
+                        timeTo = userInput(false);
                         timeChar = timeTo.ToCharArray();
-                    }
-                    else if (Convert.ToInt32(timeTo.Substring(3, 2)) < 0 || Convert.ToInt32(timeTo.Substring(3, 2)) > 59)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Please enter a valid minutes number (00-59)");
-                        Console.ResetColor();
-                        
-                        Console.Write("\nPlease enter the time: ");
                         again = true;
-                        timeTo = Console.ReadLine();
-                        Console.WriteLine();
-                        timeChar = timeTo.ToCharArray();
-                    }
-                    else if (Convert.ToInt32(timeTo.Substring(6, 2)) < 0 || Convert.ToInt32(timeTo.Substring(6, 2)) > 59)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Please enter a valid seconds number (00-59)");
-                        Console.ResetColor();
-                        
-                        Console.Write("\nPlease enter the time: ");
-                        again = true;
-                        timeTo = Console.ReadLine();
-                        Console.WriteLine();
-                        timeChar = timeTo.ToCharArray();
                     }
                     else
-                        validTime = true;
+                    {
+                        hour = Convert.ToInt32(timeTo.Substring(0, 2));
+                        minute = Convert.ToInt32(timeTo.Substring(3, 2));
+                        second = Convert.ToInt32(timeTo.Substring(6, 2));
+                        again = true;
+
+                        if (hour < 0 || hour > 23)
+                        {
+                            printError("Please enter a valid hours number (00-23)!");
+                            timeTo = userInput(false);
+                            timeChar = timeTo.ToCharArray();
+                        }
+                        else if (minute < 0 || minute > 59)
+                        {
+                            printError("Please enter a valid minutes number (00-59)!");
+                            timeTo = userInput(false);
+                            timeChar = timeTo.ToCharArray();
+                        }
+                        else if (second < 0 || second > 59)
+                        {
+                            printError("Please enter a valid seconds number (00-59)!");
+
+                            timeTo = userInput(false);
+                            timeChar = timeTo.ToCharArray();
+                        }
+                        else
+                            validTime = true;
+                    }
                 }
             }
 
@@ -262,31 +228,21 @@ namespace TimeToCalculator
             int finalHours = 0;
             int finalMinutes = 0;
             int finalSeconds = 0;
-
+            DateTime futureDate;
 
             if (useTime.ToUpper() == "Y")
-            {
-                DateTime futureDate = new DateTime(Convert.ToInt32(dateTo.Substring(6, 4)), Convert.ToInt32(dateTo.Substring(3, 2)),
-                    Convert.ToInt32(dateTo.Substring(0, 2)), Convert.ToInt32(timeTo.Substring(0, 2)),
-                    Convert.ToInt32(timeTo.Substring(3, 2)), Convert.ToInt32(timeTo.Substring(6, 2)));
-                finalYears = futureDate.Subtract(DateTime.Now).Days / 365;
-                finalMonths = futureDate.Subtract(DateTime.Now).Days / 30;
-                finalDays = futureDate.Subtract(DateTime.Now).Days;
-                finalHours = futureDate.Subtract(DateTime.Now).Hours;
-                finalMinutes = futureDate.Subtract(DateTime.Now).Minutes;
-                finalSeconds = futureDate.Subtract(DateTime.Now).Seconds;
-            }
+                futureDate = new DateTime(year, month, day, hour, minute, second);
             else
-            {
-                DateTime futureDate = new DateTime(Convert.ToInt32(dateTo.Substring(6, 4)), 
-                    Convert.ToInt32(dateTo.Substring(3, 2)), Convert.ToInt32(dateTo.Substring(0, 2)));
-                finalYears = futureDate.Subtract(DateTime.Now).Days / 365;
-                finalMonths = futureDate.Subtract(DateTime.Now).Days / 30;
-                finalDays = futureDate.Subtract(DateTime.Now).Days;
-            }
+                futureDate = new DateTime(year, month, day, 0, 0, 0);
+
+            finalYears = futureDate.Subtract(DateTime.Now).Days / 365;
+            finalMonths = futureDate.Subtract(DateTime.Now).Days / 30;
+            finalDays = futureDate.Subtract(DateTime.Now).Days;
+            finalHours = futureDate.Subtract(DateTime.Now).Hours;
+            finalMinutes = futureDate.Subtract(DateTime.Now).Minutes;
+            finalSeconds = futureDate.Subtract(DateTime.Now).Seconds;
 
             Console.Clear();
-
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("\nThe calculations show that there are:\n");
 
@@ -319,12 +275,15 @@ namespace TimeToCalculator
 }
 
 
-/* 1)Restrict year: 2017-2099. +
- * 2)Restrict months: 1-12. +
- * 3)Restrict days per month (even for leap years). +
- * 4)Restrict hours: 0-23 +
- * 5)Restrict minutes: 0-59 +
- * 6)Restrict seconds: 0-59 +
- * 7)Make option to use time or not. +
- * 8)
+/* 1)Restrict year: 2017-2099. =
+ * 2)Restrict months: 1-12. =
+ * 3)Restrict days per month (even for leap years). =
+ * 4)Restrict hours: 0-23 =
+ * 5)Restrict minutes: 0-59 =
+ * 6)Restrict seconds: 0-59 =
+ * 7)Make option to use time or not. =
+ * 8)Simplyfied converting. Now it happens once not in every check. +
+ * 9)Made two new functions to print an error msg and another for the repeating user input. +
+ * 10)Fixed a bug where if time left was less than a day (hours,minutes,seconds) and timeTo wasnt specified it wouldn't print anything. +
+ * 11)Fixed a bug where time didnt work (simple stupidity):/ . +
  */
