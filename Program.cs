@@ -4,6 +4,12 @@ namespace TimeToCalculator
 {
     class Program
     {
+        static bool isNumeric(string text)
+        {
+            int temp;
+            return !int.TryParse(text,out temp);
+        }
+
         static string userInput(bool isDate)
         {
             if (isDate == true)
@@ -31,8 +37,6 @@ namespace TimeToCalculator
             bool again = false;
             bool validDate = false;
             bool validTime = false;
-            char[] dateChar = dateTo.ToCharArray();
-            char[] timeChar = timeTo.ToCharArray();
             int day = 0;
             int month = 0;
             int year = 0;
@@ -41,7 +45,8 @@ namespace TimeToCalculator
 
             while (validDate == false)
             {
-                if (dateTo.Length != 10 || (dateChar[2] != '/' || dateChar[5] != '/'))
+                if (dateTo.Length != 10 || (isNumeric(dateTo.Substring(0,2)) || isNumeric(dateTo.Substring(3,2)) ||
+                    isNumeric(dateTo.Substring(6,4)) || dateTo.Substring(2,1) != "/" || dateTo.Substring(5,1) != "/"))
                 {
                     if (again == true)
                         printError("\n\nPlease use the correct date format!");
@@ -50,7 +55,6 @@ namespace TimeToCalculator
                     Console.WriteLine("Example: 05/10/2017");
 
                     dateTo = userInput(true);
-                    dateChar = dateTo.ToCharArray();
                     again = true;
                 }
                 else
@@ -175,16 +179,16 @@ namespace TimeToCalculator
             {
                 while (validTime == false)
                 {
-                    if (timeTo.Length != 8 || timeChar[2] != ':' || timeChar[5] != ':')
+                    if (timeTo.Length != 8 || (isNumeric(timeTo.Substring(0, 2)) || isNumeric(timeTo.Substring(3, 2)) || 
+                        isNumeric(timeTo.Substring(6, 2)) || timeTo.Substring(2,1) != ":" || timeTo.Substring(5,1) != ":"))
                     {
                         if (again == true)
-                            printError("\n\nPlease use the correct time format");
+                            printError("\n\nPlease use the correct time format!");
 
                         Console.WriteLine("\nPlease enter the time-to (hh:mm:ss)");
                         Console.WriteLine("Example: 17:23:46");
                         
                         timeTo = userInput(false);
-                        timeChar = timeTo.ToCharArray();
                         again = true;
                     }
                     else
@@ -198,20 +202,17 @@ namespace TimeToCalculator
                         {
                             printError("Please enter a valid hours number (00-23)!");
                             timeTo = userInput(false);
-                            timeChar = timeTo.ToCharArray();
                         }
                         else if (minute < 0 || minute > 59)
                         {
                             printError("Please enter a valid minutes number (00-59)!");
                             timeTo = userInput(false);
-                            timeChar = timeTo.ToCharArray();
                         }
                         else if (second < 0 || second > 59)
                         {
                             printError("Please enter a valid seconds number (00-59)!");
 
                             timeTo = userInput(false);
-                            timeChar = timeTo.ToCharArray();
                         }
                         else
                             validTime = true;
@@ -228,6 +229,7 @@ namespace TimeToCalculator
             int finalHours = 0;
             int finalMinutes = 0;
             int finalSeconds = 0;
+            int temp = 0;
             DateTime futureDate;
 
             if (useTime.ToUpper() == "Y")
@@ -235,41 +237,53 @@ namespace TimeToCalculator
             else
                 futureDate = new DateTime(year, month, day, 0, 0, 0);
 
-            finalYears = futureDate.Subtract(DateTime.Now).Days / 365;
-            finalMonths = futureDate.Subtract(DateTime.Now).Days / 30;
-            finalDays = futureDate.Subtract(DateTime.Now).Days;
-            finalHours = futureDate.Subtract(DateTime.Now).Hours;
-            finalMinutes = futureDate.Subtract(DateTime.Now).Minutes;
-            finalSeconds = futureDate.Subtract(DateTime.Now).Seconds;
-
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("\nThe calculations show that there are:\n");
-
-            Console.ResetColor();
-
-            if (finalYears > 0)
+            while (!(Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape))
             {
-                Console.WriteLine("{0}\tyears left.", finalYears);
-                finalMonths -= 12 * finalYears;
-            }
-            if (finalMonths > 0)
-            {
-                Console.WriteLine("{0}\tmonths left.", finalMonths);
-                finalDays -= (30 * finalMonths) + (30 * 12 * finalYears);
-            }
-            if (finalDays > 0)
-                Console.WriteLine("{0}\tdays left.", finalDays);
-            if (finalHours > 0)
-                Console.WriteLine("{0}\thours left.", finalHours);
-            if (finalMinutes > 0)
-                Console.WriteLine("{0}\tminutes left.", finalMinutes);
-            if (finalSeconds > 0)
-                Console.WriteLine("{0}\tseconds left.", finalSeconds);
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("\n\n\t\t\t\tThank you for using TimeTo! (Press enter to exit)");
-            Console.ReadLine();
+                finalYears = Convert.ToInt32(Math.Floor(futureDate.Subtract(DateTime.Now).Days / 365.25));
+                finalMonths = Convert.ToInt32(Math.Floor(futureDate.Subtract(DateTime.Now).Days / 30.4167));
+                finalDays = futureDate.Subtract(DateTime.Now).Days;
+                finalHours = futureDate.Subtract(DateTime.Now).Hours;
+                finalMinutes = futureDate.Subtract(DateTime.Now).Minutes;
+                finalSeconds = futureDate.Subtract(DateTime.Now).Seconds;
+
+                if (temp != finalSeconds)
+                {
+                    Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine("\nThe calculations show that there are:\n");
+
+                    Console.ResetColor();
+
+                    if (finalYears > 0)
+                    {
+                        Console.WriteLine("{0}\tyears left.", finalYears);
+                        finalMonths -= 12 * finalYears;
+                    }
+                    if (finalMonths > 0)
+                    {
+                        Console.WriteLine("{0}\tmonths left.", finalMonths);
+                        finalDays -= Convert.ToInt32(Math.Floor((30.4167 * finalMonths) + (30.4167 * 12 * finalYears)));
+                    }
+                    if (finalDays > 0)
+                        Console.WriteLine("{0}\tdays left.", finalDays);
+                    if (finalHours > 0)
+                        Console.WriteLine("{0}\thours left.", finalHours);
+                    if (finalMinutes > 0)
+                        Console.WriteLine("{0}\tminutes left.", finalMinutes);
+                    if (finalSeconds > 0)
+                        Console.WriteLine("{0}\tseconds left.", finalSeconds);
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("\n\n\t\t\t\tThank you for using TimeTo! (Press Esc to exit)");
+                    temp = finalSeconds;
+                }
+
+                
+            }
+
+            
+            //Console.ReadLine();
         }
     }
 }
@@ -282,8 +296,12 @@ namespace TimeToCalculator
  * 5)Restrict minutes: 0-59 =
  * 6)Restrict seconds: 0-59 =
  * 7)Make option to use time or not. =
- * 8)Simplyfied converting. Now it happens once not in every check. +
- * 9)Made two new functions to print an error msg and another for the repeating user input. +
- * 10)Fixed a bug where if time left was less than a day (hours,minutes,seconds) and timeTo wasnt specified it wouldn't print anything. +
- * 11)Fixed a bug where time didnt work (simple stupidity):/ . +
+ * 8)Simplyfied converting. Now it happens once not in every check. =
+ * 9)Made two new functions to print an error msg and another for the repeating user input. =
+ * 10)Fixed a bug where if time left was less than a day (hours,minutes,seconds) and timeTo wasnt specified it wouldn't print anything. =
+ * 11)Fixed a bug where time didnt work (simple stupidity):/ . =
+ * 12)Added checking if the entered values are numbers and not characters or symbols. +
+ * 13)Removed the two character arrays using other method to make sure of the symbols in strigns. +
+ * 14)Made the calculations a lot more accurate, even for long dates. +
+ * 15)Now the programm will conineu to update the left over time until the user presses Esc every second. +
  */
