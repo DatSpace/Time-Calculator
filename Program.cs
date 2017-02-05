@@ -68,9 +68,9 @@ namespace TimeCalculator
                         year = Convert.ToInt32(dateTo.Substring(6, 4));
                         again = true;
 
-                        if (year > 2099 || year < 2017)
+                        if (year > 2099 || year < 1901)
                         {
-                            printError("Please use a valid year (2017-2099)!");
+                            printError("Please use a valid year (1901-2099)!");
                             dateTo = userInput(true);
                         }
                         else if (month > 12 || month < 1)
