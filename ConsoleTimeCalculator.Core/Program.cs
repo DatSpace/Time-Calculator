@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TimeCalculator
+namespace ConsoleTimeCalculator.Core
 {
     class Program
     {
@@ -227,12 +227,12 @@ namespace TimeCalculator
                 //END OF OPTIONAL TIME QUESTION AND VALIDITY CHECKING
 
 
-                int finalYears = 0;
-                int finalMonths = 0;
-                int finalDays = 0;
-                int finalHours = 0;
-                int finalMinutes = 0;
-                int finalSeconds = 0;
+                int finalYears;
+                int finalMonths;
+                int finalDays;
+                int finalHours;
+                int finalMinutes;
+                int finalSeconds;
                 int temp = 0;
                 DateTime futureDate;
 
@@ -250,9 +250,9 @@ namespace TimeCalculator
                         key = Console.ReadKey(true).Key;
                         if (key == ConsoleKey.Escape)
                             end = true;
-                            
+
                     }
-                        
+
                     if (futureDate > DateTime.Now)
                     {
                         finalYears = Convert.ToInt32(Math.Floor(futureDate.Subtract(DateTime.Now).Days / 365.25));
@@ -323,7 +323,7 @@ namespace TimeCalculator
                 Console.Clear();
             }
         }
-    }
+        }
 }
 
 
@@ -347,3 +347,4 @@ namespace TimeCalculator
  * 
  * NOTE: I know the code can be possibly improved a lot. This is just a simple console application for practice perposes.
  */
+
